@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Landing Config</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1f1826;
+  --panel:#231a2b;
+  --border:#2a1060;
+  --glow:#9c38ff;
+  --text:#c9a8ff;
+  --dim:#4a3080;
+  --ok:#32d583;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  min-height:100vh;
+  padding:20px;
+}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.title{font-family:'Orbitron',monospace;font-size:15px;letter-spacing:2px;color:var(--glow);}
+.home{margin-left:auto;color:var(--dim);text-decoration:none;border:1px solid var(--border);padding:6px 10px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:11px;}
+.home:hover{color:var(--glow);border-color:var(--glow);}
+.panel{
+  border:1px solid var(--border);
+  background:var(--panel);
+  border-radius:6px;
+  padding:14px;
+  max-width:980px;
+}
+.panel h2{font-family:'Orbitron',monospace;font-size:11px;color:var(--glow);letter-spacing:1.5px;margin-bottom:10px;}
+.panel p{color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:11px;margin-bottom:12px;line-height:1.5;}
+#rows{display:flex;flex-direction:column;gap:10px;}
+#search-rows{display:flex;flex-direction:column;gap:10px;}
+.row{border:1px solid var(--border);border-radius:5px;padding:10px;background:rgba(156,56,255,0.04);} 
+.row-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.row-label{font-family:'Orbitron',monospace;font-size:10px;color:var(--glow);letter-spacing:1px;}
+.remove{margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--dim);padding:4px 8px;border-radius:4px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:10px;}
+.remove:hover{border-color:var(--glow);color:var(--glow);}
+.grid{display:grid;grid-template-columns:120px 1fr;gap:6px 10px;align-items:center;}
+.grid label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);} 
+.grid input,.grid select{background:#1f1826;color:var(--text);border:1px solid var(--border);border-radius:3px;padding:6px 8px;font-family:'Share Tech Mono',monospace;font-size:11px;}
+.grid input:focus,.grid select:focus{outline:none;border-color:var(--glow);} 
+.emoji-wrap{position:relative;display:flex;align-items:center;gap:6px;}
+.emoji-btn{height:30px;min-width:34px;padding:0 8px;border:1px solid var(--border);border-radius:3px;background:#1f1826;color:var(--text);cursor:pointer;}
+.emoji-btn:hover{border-color:var(--glow);color:var(--glow);} 
+.emoji-picker{position:absolute;top:calc(100% + 6px);left:0;z-index:30;display:none;background:#1f1826;border:1px solid var(--glow);border-radius:4px;padding:8px;min-width:240px;box-shadow:0 0 16px rgba(156,56,255,0.2);}
+.emoji-picker.open{display:block;}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-bottom:8px;}
+.emoji-item{border:1px solid var(--border);border-radius:3px;background:rgba(156,56,255,0.05);cursor:pointer;padding:4px 0;font-size:16px;line-height:1;}
+.emoji-item:hover{border-color:var(--glow);background:rgba(156,56,255,0.18);} 
+.emoji-help{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);text-decoration:none;}
+.emoji-help:hover{color:var(--glow);} 
+.actions{display:flex;gap:8px;align-items:center;margin-top:12px;}
+.btn{background:rgba(156,56,255,0.1);border:1px solid var(--glow);color:var(--glow);border-radius:4px;padding:7px 10px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:11px;}
+.btn:hover{background:rgba(156,56,255,0.2);} 
+#search-tools{flex-wrap:wrap;gap:8px 10px;align-items:center;}
+.tool-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);}
+.tool-select,.tool-input{height:30px;min-width:160px;background:#1f1826;color:var(--text);border:1px solid var(--border);border-radius:4px;padding:0 8px;font-family:'Share Tech Mono',monospace;font-size:11px;}
+.tool-select:focus,.tool-input:focus{outline:none;border-color:var(--glow);} 
+.icon-wrap{display:flex;align-items:center;gap:6px;}
+.icon-preview{width:18px;height:18px;display:none;object-fit:contain;border-radius:3px;background:#1f1826;border:1px solid var(--border);}
+.tiny-btn{height:30px;padding:0 8px;background:#1f1826;border:1px solid var(--border);border-radius:3px;color:var(--dim);cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:10px;white-space:nowrap;}
+.tiny-btn:hover{border-color:var(--glow);color:var(--glow);} 
+.notice{
+  position:fixed;right:18px;bottom:18px;z-index:1200;
+  background:#140d19;border:1px solid var(--glow);border-radius:5px;
+  color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;
+  padding:9px 12px;box-shadow:0 0 16px rgba(156,56,255,0.3);
+  opacity:0;transform:translateY(8px);pointer-events:none;
+  transition:opacity .16s ease,transform .16s ease;
+}
+.notice.show{opacity:1;transform:translateY(0);} 
+#status{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--dim);} 
+.ok{color:var(--ok) !important;}
+.bookmark-section-category{display:flex;align-items:center;gap:8px;margin-top:4px;}
+.bookmark-section-category label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);white-space:nowrap;}
+.bookmark-section-category input{flex:1;min-width:160px;background:#1f1826;color:var(--text);border:1px solid var(--border);border-radius:3px;padding:6px 8px;font-family:'Share Tech Mono',monospace;font-size:11px;}
+.bookmark-entry-row{display:grid;grid-template-columns:70px minmax(120px,1fr) minmax(220px,2fr) auto;gap:8px;align-items:center;margin-top:6px;}
+.bookmark-entry-row input{background:#1f1826;color:var(--text);border:1px solid var(--border);border-radius:3px;padding:6px 8px;font-family:'Share Tech Mono',monospace;font-size:11px;min-width:0;}
+.feed-row-grid{display:grid;grid-template-columns:auto minmax(120px,1fr) auto minmax(260px,2fr) auto;gap:8px;align-items:center;}
+.feed-row-grid label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);white-space:nowrap;}
+.feed-row-grid input[type="text"]{background:#1f1826;color:var(--text);border:1px solid var(--border);border-radius:3px;padding:6px 8px;font-family:'Share Tech Mono',monospace;font-size:11px;min-width:0;}
+.feed-enabled-inline{display:inline-flex;align-items:center;gap:6px;cursor:pointer;}
+.feed-enabled-inline input{accent-color:var(--glow);} 
+.workspace-page-row{display:grid;grid-template-columns:auto 70px auto minmax(120px,1fr) auto minmax(260px,2fr) auto;gap:8px;align-items:center;}
+.workspace-page-row label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);white-space:nowrap;}
+.workspace-page-row input[type="text"]{background:#1f1826;color:var(--text);border:1px solid var(--border);border-radius:3px;padding:6px 8px;font-family:'Share Tech Mono',monospace;font-size:11px;min-width:0;}
+.workspace-page-enabled{display:inline-flex;align-items:center;gap:6px;cursor:pointer;}
+.workspace-page-enabled input{accent-color:var(--glow);} 
+.theme-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.theme-row label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);white-space:nowrap;}
+.theme-color-grid{display:grid;grid-template-columns:repeat(2,minmax(240px,1fr));gap:8px;margin-top:8px;}
+.theme-color-item{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:4px;padding:7px;background:rgba(156,56,255,0.04);} 
+.theme-color-item label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);min-width:120px;}
+.theme-color-item input[type="color"]{width:34px;height:24px;border:1px solid var(--border);border-radius:3px;background:#1f1826;padding:0;cursor:pointer;}
+.theme-color-item .theme-hex{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text);min-width:72px;}
+@media (max-width:800px){
+  .grid{grid-template-columns:1fr;}
+  .bookmark-entry-row{grid-template-columns:1fr;}
+  .feed-row-grid{grid-template-columns:1fr;}
+  .workspace-page-row{grid-template-columns:1fr;}
+  .theme-color-grid{grid-template-columns:1fr;}
+  .bookmark-section-category{flex-direction:column;align-items:stretch;}
+}
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">LANDING PAGE CONFIG</div>
+    <a class="home" href="startpage.html">BACK TO STARTPAGE</a>
+  </div>
+
+  <div class="panel">
+    <h2>DROPDOWNS</h2>
+    <p>Single section config: each dropdown entry includes button label, title, icon, and host URL. Saved config is applied on next refresh of startpage.</p>
+    <div id="rows"></div>
+    <div class="actions">
+      <button id="add-row" class="btn" type="button">ADD DROPDOWN</button>
+      <button id="save" class="btn" type="button">SAVE</button>
+      <button id="reset" class="btn" type="button">RESET TO FILE</button>
+      <button id="export" class="btn" type="button">EXPORT JSON</button>
+      <button id="import" class="btn" type="button">IMPORT JSON</button>
+      <input id="import-file" type="file" accept="application/json,.json" style="display:none;">
+      <div id="status">ready</div>
+    </div>
+
+    <h2 style="margin-top:16px;">SEARCH MODES</h2>
+    <p>Add/remove search engines and categories for the top search-mode selector.</p>
+    <div class="actions" id="search-tools">
+      <span class="tool-label">Category</span>
+      <select id="search-category-filter" class="tool-select"></select>
+      <span class="tool-label">Entry</span>
+      <select id="search-entry-filter" class="tool-select"></select>
+      <input id="new-category-name" class="tool-input" type="text" placeholder="new category name">
+      <button id="add-category" class="btn" type="button">ADD CATEGORY</button>
+      <button id="add-search-row" class="btn" type="button">ADD SEARCH MODE</button>
+    </div>
+    <div id="search-rows"></div>
+
+    <h2 style="margin-top:16px;">SECURITY FEED</h2>
+    <p>Manage RSS sources used by the left Security Feed panel.</p>
+    <div class="actions" id="feed-tools">
+      <button id="add-feed-row" class="btn" type="button">ADD FEED SOURCE</button>
+    </div>
+    <div id="feed-rows"></div>
+
+    <h2 style="margin-top:16px;">WORKSPACE WEBPAGES</h2>
+    <p>Add extra webpages to the center tab workspace on the start page.</p>
+    <div class="actions" id="workspace-tools">
+      <button id="add-workspace-page" class="btn" type="button">ADD WEBPAGE</button>
+    </div>
+    <div id="workspace-page-rows"></div>
+
+    <h2 style="margin-top:16px;">THEMES</h2>
+    <p>Pick a theme and adjust its colors using the color wheel pickers.</p>
+    <div class="actions" id="theme-tools">
+      <div class="theme-row">
+        <label for="active-theme-select">Active Theme</label>
+        <select id="active-theme-select" class="tool-select"></select>
+      </div>
+    </div>
+    <div id="theme-colors" class="theme-color-grid"></div>
+
+    <h2 style="margin-top:16px;">BOOKMARK SECTIONS</h2>
+    <p>Manage left sidebar categories and links (Cert Bodies, Training, Intel, Tools, etc).</p>
+    <div class="actions" id="bookmark-tools">
+      <span class="tool-label">Category</span>
+      <select id="bookmark-category-filter" class="tool-select"></select>
+      <button id="add-bookmark-section" class="btn" type="button">ADD SECTION</button>
+    </div>
+    <div id="bookmark-rows"></div>
+
+  </div>
+
+  <div id="notice" class="notice"></div>
+
+<script>
+const KEY='landing_page_config_v1';
+const RECOMMENDED_EMOJIS=['🍓','🛠','🖥️','🧠','📦','🧪','🛰️','🗄️','🕹️','📡','🧰','🛡️','🚀','💾','🔌','🧩'];
+const THEME_COLOR_FIELDS=[
+  {key:'bg',label:'Background'},
+  {key:'panel',label:'Panel'},
+  {key:'border',label:'Border'},
+  {key:'glow',label:'Primary Glow'},
+  {key:'glow2',label:'Secondary Glow'},
+  {key:'muted',label:'Accent Muted'},
+  {key:'text',label:'Text'},
+  {key:'dim',label:'Dim Text'},
+  {key:'green',label:'Success'},
+  {key:'warn',label:'Warning'}
+];
+const DEFAULT_THEMES=[
+  {name:'Forge',colors:{bg:'#1f1826',panel:'#231a2b',border:'#2a1060',glow:'#9c38ff',glow2:'#c47aff',muted:'#2964b3',text:'#c9a8ff',dim:'#4a3080',green:'#32d583',warn:'#ffb700'}},
+  {name:'Dark',colors:{bg:'#0f141a',panel:'#161d26',border:'#2a3543',glow:'#5fc7ff',glow2:'#9de0ff',muted:'#3a77a8',text:'#d4e7ff',dim:'#7187a1',green:'#48d39a',warn:'#f0b34d'}},
+  {name:'Ember',colors:{bg:'#211712',panel:'#2b1d17',border:'#5b2b1b',glow:'#ff6a3d',glow2:'#ff9a6e',muted:'#b35d29',text:'#ffd8c6',dim:'#8a4d35',green:'#65e59a',warn:'#ffc043'}},
+  {name:'Glacier',colors:{bg:'#0f1b26',panel:'#142331',border:'#1d4a67',glow:'#45c7ff',glow2:'#8ae0ff',muted:'#2f7ea6',text:'#c7edff',dim:'#5a89a3',green:'#43f0c0',warn:'#ffd166'}},
+  {name:'Oceanic',colors:{bg:'#131f2a',panel:'#192735',border:'#214a66',glow:'#2fb4ff',glow2:'#7fd5ff',muted:'#2e769c',text:'#c7e8ff',dim:'#5b84a0',green:'#53f0ba',warn:'#ffcb6b'}},
+  {name:'Matrix',colors:{bg:'#0d140f',panel:'#121d15',border:'#1d4b2b',glow:'#33ff66',glow2:'#8affab',muted:'#2d8a45',text:'#b9ffcf',dim:'#4f8a60',green:'#3dff90',warn:'#d7ff5f'}}
+];
+const DEFAULT_CFG={
+  dropdowns:[
+    {buttonLabel:'WEBSITE EXAMPLE',title:'PUBLIC WEBSITE EXAMPLE',url:'https://example.com',icon:'🌐'},
+    {buttonLabel:'WEB APP EXAMPLE',title:'PUBLIC WEB APP EXAMPLE',url:'https://example.org',icon:'🖥️'}
+  ],
+  searchModes:[
+    {category:'🌐 GENERAL',name:'DuckDuckGo',short:'DDG',icon:'auto',url:'https://duckduckgo.com/?q=',desc:'Private search, no tracking',b64:false},
+    {category:'🌐 GENERAL',name:'Google',short:'Google',icon:'auto',url:'https://www.google.com/search?q=',desc:'Google web search',b64:false},
+    {category:'🌐 GENERAL',name:'Bing',short:'Bing',icon:'auto',url:'https://www.bing.com/search?q=',desc:'Microsoft Bing search',b64:false},
+    {category:'🌐 GENERAL',name:'Brave',short:'Brave',icon:'auto',url:'https://search.brave.com/search?q=',desc:'Brave private search',b64:false},
+    {category:'🌐 GENERAL',name:'StartPage',short:'StartPage',icon:'auto',url:'https://www.startpage.com/search?q=',desc:'Google results, no tracking',b64:false},
+    {category:'🌐 GENERAL',name:'Kagi',short:'Kagi',icon:'auto',url:'https://kagi.com/search?q=',desc:'Premium search engine',b64:false},
+    {category:'🌐 GENERAL',name:'Perplexity',short:'Perplexity',icon:'auto',url:'https://www.perplexity.ai/search?q=',desc:'Answer-focused web search',b64:false},
+    {category:'🕵️ OSINT',name:'Ahmia',short:'Ahmia',icon:'auto',url:'https://ahmia.fi/search/?q=',desc:'Search engine for Tor hidden services',b64:false},
+    {category:'🕵️ OSINT',name:'OpenSanctions',short:'OpenSanct',icon:'auto',url:'https://www.opensanctions.org/search/?q=',desc:'Sanctions, entities, and watchlist intelligence',b64:false},
+    {category:'🕵️ OSINT',name:'Have I Been Pwned',short:'HIBP',icon:'auto',url:'https://haveibeenpwned.com/account/',desc:'Email breach exposure lookup',b64:false},
+    {category:'🕵️ OSINT',name:'crt.sh',short:'crt.sh',icon:'auto',url:'https://crt.sh/?q=',desc:'Certificate transparency search',b64:false},
+    {category:'🕵️ OSINT',name:'SecurityTrails',short:'SecTrails',icon:'auto',url:'https://securitytrails.com/list/apex_domain/',desc:'Domain, DNS, and historical records',b64:false},
+    {category:'🕵️ OSINT',name:'PublicWWW',short:'PublicWWW',icon:'auto',url:'https://publicwww.com/websites/',desc:'Search source code across indexed websites',b64:false},
+    {category:'🌏 REGIONAL',name:'Yandex',short:'Yandex',icon:'auto',url:'https://yandex.com/search/?text=',desc:'Popular Russian search engine',b64:false},
+    {category:'🌏 REGIONAL',name:'Baidu',short:'Baidu',icon:'auto',url:'https://www.baidu.com/s?wd=',desc:'Popular Chinese search engine',b64:false},
+    {category:'🌏 REGIONAL',name:'Sogou',short:'Sogou',icon:'auto',url:'https://www.sogou.com/web?query=',desc:'Chinese web search engine',b64:false},
+    {category:'🌏 REGIONAL',name:'360 Search',short:'360',icon:'auto',url:'https://www.so.com/s?q=',desc:'Chinese Qihoo 360 search engine',b64:false},
+    {category:'🔒 CYBERSEC',name:'Shodan',short:'Shodan',icon:'auto',url:'https://www.shodan.io/search?query=',desc:'Internet-connected device search',b64:false},
+    {category:'🔒 CYBERSEC',name:'VirusTotal',short:'VT',icon:'auto',url:'https://www.virustotal.com/gui/search/',desc:'Scan files, URLs, hashes',b64:false},
+    {category:'🔒 CYBERSEC',name:'Exploit-DB',short:'EDB',icon:'auto',url:'https://www.exploit-db.com/search?q=',desc:'Exploit and PoC database',b64:false},
+    {category:'🔒 CYBERSEC',name:'Pulsedive',short:'Pulsedive',icon:'auto',url:'https://pulsedive.com/search/?q=',desc:'Threat intelligence and IOC enrichment',b64:false},
+    {category:'🔒 CYBERSEC',name:'AbuseIPDB',short:'AbuseIPDB',icon:'auto',url:'https://www.abuseipdb.com/check/',desc:'IP reputation and abuse reports',b64:false},
+    {category:'🔒 CYBERSEC',name:'NVD',short:'NVD',icon:'auto',url:'https://nvd.nist.gov/vuln/search/results?query=',desc:'NIST CVE/NVD lookup',b64:false},
+    {category:'🔒 CYBERSEC',name:'CVE Search',short:'CVE',icon:'auto',url:'https://nvd.nist.gov/vuln/search/results?query=',desc:'Search CVEs and vulnerabilities',b64:false},
+    {category:'🔒 CYBERSEC',name:'MITRE ATT&CK',short:'ATT&CK',icon:'auto',url:'https://attack.mitre.org/techniques/?q=',desc:'Tactics, techniques, procedures',b64:false},
+    {category:'🔒 CYBERSEC',name:'URLScan',short:'URLScan',icon:'auto',url:'https://urlscan.io/search/#?q=',desc:'Scan and analyze websites and URLs',b64:false},
+    {category:'🔒 CYBERSEC',name:'Hybrid Analysis',short:'Hybrid',icon:'auto',url:'https://www.hybrid-analysis.com/search?query=',desc:'Malware and file behavior analysis',b64:false},
+    {category:'🗄 OSINT/DB',name:'Censys',short:'Censys',icon:'auto',url:'https://search.censys.io/search?resource=hosts&q=',desc:'Internet host and cert search',b64:false},
+    {category:'🗄 OSINT/DB',name:'Grep.app',short:'Grep.app',icon:'auto',url:'https://grep.app/search?q=',desc:'Search code across GitHub repos',b64:false},
+    {category:'🗄 OSINT/DB',name:'FOFA',short:'FOFA',icon:'auto',url:'https://fofa.info/result?qbase64=',desc:'Chinese cyber asset search engine',b64:true},
+    {category:'🗄 OSINT/DB',name:'Hunter.io',short:'Hunter',icon:'auto',url:'https://hunter.io/search/',desc:'Email and domain intelligence',b64:false},
+    {category:'🗄 OSINT/DB',name:'Dehashed',short:'Dehashed',icon:'auto',url:'https://dehashed.com/search?query=',desc:'Breach and credential intelligence',b64:false},
+    {category:'🗄 OSINT/DB',name:'IntelX',short:'IntelX',icon:'auto',url:'https://intelx.io/?s=',desc:'OSINT and deep web search',b64:false},
+    {category:'🗄 OSINT/DB',name:'WHOIS',short:'WHOIS',icon:'auto',url:'https://www.whois.com/whois/',desc:'Domain registration lookup',b64:false},
+    {category:'🕵️ OSINT',name:'GreyNoise',short:'GreyNoise',icon:'auto',url:'https://viz.greynoise.io/query/',desc:'Classify internet scan noise vs targeted activity',b64:false},
+    {category:'🕵️ OSINT',name:'URLHaus',short:'URLHaus',icon:'auto',url:'https://urlhaus.abuse.ch/browse.php?search=',desc:'Malicious URL and malware distribution lookup',b64:false},
+    {category:'🕵️ OSINT',name:'AlienVault OTX',short:'OTX',icon:'auto',url:'https://otx.alienvault.com/browse/global/pulses?q=',desc:'Threat intel pulses and IOC pivots',b64:false},
+    {category:'🕵️ OSINT',name:'Wayback Machine',short:'Wayback',icon:'auto',url:'https://web.archive.org/web/*/',desc:'Historical snapshots for domain and URL recon',b64:false},
+    {category:'🕵️ OSINT',name:'RiskIQ PassiveTotal',short:'Passive',icon:'auto',url:'https://community.riskiq.com/search/',desc:'Passive DNS and infrastructure intelligence',b64:false},
+    {category:'🌏 REGIONAL',name:'Naver',short:'Naver',icon:'auto',url:'https://search.naver.com/search.naver?query=',desc:'Major Korean search engine',b64:false},
+    {category:'🌏 REGIONAL',name:'Seznam',short:'Seznam',icon:'auto',url:'https://search.seznam.cz/?q=',desc:'Major Czech and CEE search engine',b64:false},
+    {category:'🔒 CYBERSEC',name:'MITRE CVE',short:'MITRE CVE',icon:'auto',url:'https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=',desc:'Direct MITRE CVE keyword search',b64:false},
+    {category:'🔒 CYBERSEC',name:'CISA KEV Search',short:'KEV',icon:'auto',url:'https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=',desc:'Known exploited vulnerability catalog search',b64:false},
+    {category:'🔒 CYBERSEC',name:'SSLLabs',short:'SSL Labs',icon:'auto',url:'https://www.ssllabs.com/ssltest/analyze.html?d=',desc:'TLS configuration and certificate posture checks',b64:false},
+    {category:'🔒 CYBERSEC',name:'ZoomEye',short:'ZoomEye',icon:'auto',url:'https://www.zoomeye.hk/searchResult?q=',desc:'Internet asset and exposure search',b64:false},
+    {category:'🔒 CYBERSEC',name:'Quake',short:'Quake',icon:'auto',url:'https://quake.360.net/quake/#/searchResult?keyword=',desc:'Regional cyber asset search platform',b64:false},
+    {category:'🌐 GENERAL',name:'Mojeek',short:'Mojeek',icon:'auto',url:'https://www.mojeek.com/search?q=',desc:'Independent web index search engine',b64:false},
+    {category:'🌐 GENERAL',name:'Exa',short:'Exa',icon:'auto',url:'https://exa.ai/search?q=',desc:'AI-native web and research search',b64:false}
+  ],
+  securityFeeds:[
+    {name:'BleepingComputer',url:'https://www.bleepingcomputer.com/feed/',enabled:true},
+    {name:'Krebs on Sec',url:'https://krebsonsecurity.com/feed/',enabled:true},
+    {name:'Dark Reading',url:'https://www.darkreading.com/rss.xml',enabled:true},
+    {name:'CISA',url:'https://www.cisa.gov/cybersecurity-advisories/all.xml',enabled:true}
+  ],
+  activeTheme:'Forge',
+  themes:deepClone(DEFAULT_THEMES),
+  workspacePages:[],
+  bookmarkSections:[
+    {category:'Cert Bodies',entries:[
+      {icon:'🔷',label:'CompTIA',url:'https://www.comptia.org/certifications'},
+      {icon:'🔷',label:'ISC²',url:'https://www.isc2.org/certifications'},
+      {icon:'🔷',label:'GIAC / SANS',url:'https://www.giac.org/certifications'},
+      {icon:'🔴',label:'OffSec',url:'https://www.offensive-security.com/courses-and-certifications/'},
+      {icon:'🔷',label:'EC-Council',url:'https://www.eccouncil.org'},
+      {icon:'🔷',label:'ISACA',url:'https://www.isaca.org/credentialing'}
+    ]},
+    {category:'Training',entries:[
+      {icon:'🟢',label:'TryHackMe',url:'https://tryhackme.com'},
+      {icon:'🟢',label:'HTB Academy',url:'https://academy.hackthebox.com'},
+      {icon:'🟢',label:'PortSwigger',url:'https://portswigger.net/web-security'},
+      {icon:'🟢',label:'INE Security',url:'https://security.ine.com'},
+      {icon:'🟢',label:'SANS',url:'https://www.sans.org/cyberaces/'}
+    ]},
+    {category:'Intel',entries:[
+      {icon:'📰',label:'BleepingComp',url:'https://www.bleepingcomputer.com'},
+      {icon:'📰',label:'Dark Reading',url:'https://www.darkreading.com'},
+      {icon:'⚠️',label:'NVD / CVEs',url:'https://nvd.nist.gov/vuln/search'},
+      {icon:'⚠️',label:'CISA KEV',url:'https://www.cisa.gov/known-exploited-vulnerabilities-catalog'},
+      {icon:'🎯',label:'MITRE ATT&CK',url:'https://attack.mitre.org'}
+    ]},
+    {category:'Tools',entries:[
+      {icon:'🔍',label:'Shodan',url:'https://www.shodan.io'},
+      {icon:'🔬',label:'VirusTotal',url:'https://www.virustotal.com'},
+      {icon:'🔧',label:'CyberChef',url:'https://cyberchef.io'},
+      {icon:'💣',label:'Exploit-DB',url:'https://www.exploit-db.com'},
+      {icon:'🐧',label:'GTFOBins',url:'https://gtfobins.github.io'},
+      {icon:'🪟',label:'LOLBAS',url:'https://lolbas-project.github.io'}
+    ]}
+  ]
+};
+
+const rowsEl=document.getElementById('rows');
+const searchRowsEl=document.getElementById('search-rows');
+const feedRowsEl=document.getElementById('feed-rows');
+const workspacePageRowsEl=document.getElementById('workspace-page-rows');
+const activeThemeSelectEl=document.getElementById('active-theme-select');
+const themeColorsEl=document.getElementById('theme-colors');
+const bookmarkRowsEl=document.getElementById('bookmark-rows');
+const statusEl=document.getElementById('status');
+const searchCategoryFilterEl=document.getElementById('search-category-filter');
+const searchEntryFilterEl=document.getElementById('search-entry-filter');
+const newCategoryNameEl=document.getElementById('new-category-name');
+const bookmarkCategoryFilterEl=document.getElementById('bookmark-category-filter');
+const noticeEl=document.getElementById('notice');
+let bookmarkSectionSeq=0;
+let bookmarkEntrySeq=0;
+
+let knownCategories=[];
+let searchRowSeq=0;
+let feedRowSeq=0;
+let workspacePageSeq=0;
+let noticeTimer=null;
+let currentThemes=deepClone(DEFAULT_THEMES);
+
+function showStatus(msg,isOk){
+  statusEl.textContent=msg;
+  statusEl.classList.toggle('ok',Boolean(isOk));
+}
+
+function showNotice(msg){
+  if(!noticeEl)return;
+  noticeEl.textContent=msg;
+  noticeEl.classList.add('show');
+  if(noticeTimer)clearTimeout(noticeTimer);
+  noticeTimer=setTimeout(()=>noticeEl.classList.remove('show'),1800);
+}
+
+function deepClone(obj){
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function normalizeHexColor(value,fallback){
+  const raw=String(value||'').trim();
+  if(/^#[0-9a-fA-F]{6}$/.test(raw))return raw.toLowerCase();
+  if(/^#[0-9a-fA-F]{3}$/.test(raw)){
+    const h=raw.slice(1);
+    return `#${h[0]}${h[0]}${h[1]}${h[1]}${h[2]}${h[2]}`.toLowerCase();
+  }
+  return String(fallback||'#000000').toLowerCase();
+}
+
+function normalizeThemeColors(colors,fallbackColors){
+  const src=colors&&typeof colors==='object'?colors:{};
+  const fb=fallbackColors&&typeof fallbackColors==='object'?fallbackColors:{};
+  const out={};
+  THEME_COLOR_FIELDS.forEach(field=>{
+    out[field.key]=normalizeHexColor(src[field.key],fb[field.key]||'#000000');
+  });
+  return out;
+}
+
+function safeThemes(themes){
+  const list=Array.isArray(themes)?themes:[];
+  const fallback=deepClone(DEFAULT_THEMES);
+  if(!list.length)return fallback;
+
+  const normalized=list
+    .map((theme,idx)=>{
+      const base=fallback[idx]||fallback[0];
+      const name=String(theme?.name||base.name||`Theme ${idx+1}`).trim();
+      const colors=normalizeThemeColors(theme?.colors,base.colors);
+      return {name:name||`Theme ${idx+1}`,colors};
+    })
+    .filter(theme=>theme.name);
+
+  if(!normalized.length)return fallback;
+  return normalized;
+}
+
+function getThemeByName(themes,name){
+  const target=String(name||'').trim().toLowerCase();
+  return (Array.isArray(themes)?themes:[]).find(t=>String(t?.name||'').trim().toLowerCase()===target)||null;
+}
+
+function applyEditorThemePreview(colors){
+  const c=normalizeThemeColors(colors,DEFAULT_THEMES[0].colors);
+  const root=document.documentElement;
+  root.style.setProperty('--bg',c.bg);
+  root.style.setProperty('--panel',c.panel);
+  root.style.setProperty('--border',c.border);
+  root.style.setProperty('--glow',c.glow);
+  root.style.setProperty('--glow2',c.glow2);
+  root.style.setProperty('--muted',c.muted);
+  root.style.setProperty('--text',c.text);
+  root.style.setProperty('--dim',c.dim);
+  root.style.setProperty('--ok',c.green);
+}
+
+function renderThemeColorInputs(theme){
+  themeColorsEl.innerHTML='';
+  const colors=normalizeThemeColors(theme?.colors,DEFAULT_THEMES[0].colors);
+  THEME_COLOR_FIELDS.forEach(field=>{
+    const item=document.createElement('div');
+    item.className='theme-color-item';
+    const id=`theme-color-${field.key}`;
+    item.innerHTML=`
+      <label for="${id}">${field.label}</label>
+      <input id="${id}" type="color" data-theme-key="${field.key}" value="${colors[field.key]}">
+      <span class="theme-hex" data-theme-hex="${field.key}">${colors[field.key]}</span>`;
+    themeColorsEl.appendChild(item);
+  });
+
+  applyEditorThemePreview(colors);
+
+  themeColorsEl.querySelectorAll('input[data-theme-key]').forEach(input=>{
+    input.addEventListener('input',()=>{
+      const key=input.dataset.themeKey;
+      const themeName=activeThemeSelectEl.value;
+      const theme=getThemeByName(currentThemes,themeName);
+      if(!theme||!key)return;
+      theme.colors[key]=normalizeHexColor(input.value,theme.colors[key]);
+      const hexEl=themeColorsEl.querySelector(`[data-theme-hex="${key}"]`);
+      if(hexEl)hexEl.textContent=theme.colors[key];
+      applyEditorThemePreview(theme.colors);
+    });
+  });
+}
+
+function renderThemeEditor(activeTheme,themes){
+  currentThemes=safeThemes(themes);
+  activeThemeSelectEl.innerHTML='';
+  currentThemes.forEach(theme=>{
+    const op=document.createElement('option');
+    op.value=theme.name;
+    op.textContent=theme.name;
+    activeThemeSelectEl.appendChild(op);
+  });
+  const selected=getThemeByName(currentThemes,activeTheme)?.name||currentThemes[0].name;
+  activeThemeSelectEl.value=selected;
+  const active=getThemeByName(currentThemes,selected)||currentThemes[0];
+  renderThemeColorInputs(active);
+}
+
+function getSearchModeKey(m){
+  const c=String(m.category||'').trim().toLowerCase();
+  const n=String(m.name||'').trim().toLowerCase();
+  const u=String(m.url||'').trim().toLowerCase();
+  return `${c}|${n}|${u}`;
+}
+
+function mergeCfg(baseCfg,overrideCfg){
+  const base=safeCfg(baseCfg);
+  const over=safeCfg(overrideCfg);
+  const mergedSearch=[];
+  const idxByKey=new Map();
+
+  base.searchModes.forEach(m=>{
+    const key=getSearchModeKey(m);
+    if(!idxByKey.has(key)){
+      idxByKey.set(key,mergedSearch.length);
+      mergedSearch.push(m);
+    }
+  });
+  over.searchModes.forEach(m=>{
+    const key=getSearchModeKey(m);
+    if(idxByKey.has(key))mergedSearch[idxByKey.get(key)]=m;
+    else{
+      idxByKey.set(key,mergedSearch.length);
+      mergedSearch.push(m);
+    }
+  });
+
+  return safeCfg({
+    dropdowns:over.dropdowns.length?over.dropdowns:base.dropdowns,
+    searchModes:mergedSearch,
+    securityFeeds:over.securityFeeds.length?over.securityFeeds:base.securityFeeds,
+    activeTheme:over.activeTheme||base.activeTheme,
+    themes:over.themes.length?over.themes:base.themes,
+    workspacePages:over.workspacePages.length?over.workspacePages:base.workspacePages,
+    bookmarkSections:over.bookmarkSections.length?over.bookmarkSections:base.bookmarkSections
+  });
+}
+
+function safeCfg(cfg,{useDefaults=true}={}){
+  const hasDropdowns=Boolean(cfg&&Array.isArray(cfg.dropdowns));
+  const hasSearchModes=Boolean(cfg&&Array.isArray(cfg.searchModes));
+  const hasSecurityFeeds=Boolean(cfg&&Array.isArray(cfg.securityFeeds));
+  const hasThemes=Boolean(cfg&&Array.isArray(cfg.themes));
+  const hasActiveTheme=Boolean(cfg&&typeof cfg.activeTheme==='string');
+  const hasWorkspacePages=Boolean(cfg&&Array.isArray(cfg.workspacePages));
+  const hasBookmarkSections=Boolean(cfg&&Array.isArray(cfg.bookmarkSections));
+
+  const d=(hasDropdowns?cfg.dropdowns:[])
+    .filter(x=>x&&typeof x.url==='string'&&x.url.trim())
+    .map((x,i)=>({
+      buttonLabel:String(x.buttonLabel||`PANEL ${i+1}`),
+      title:String(x.title||`PANEL ${i+1}`),
+      url:String(x.url),
+      icon:String(x.icon||'🧩')
+    }));
+  const s=(hasSearchModes?cfg.searchModes:[])
+    .filter(x=>x&&typeof x.url==='string'&&x.url.trim())
+    .map((x,i)=>(
+      {
+        category:String(x.category||'🌐 GENERAL'),
+        name:String(x.name||`Mode ${i+1}`),
+        short:String(x.short||x.name||`M${i+1}`),
+        icon:String(x.icon||'🔎'),
+        url:String(x.url),
+        desc:String(x.desc||''),
+        b64:Boolean(x.b64)
+      }
+    ));
+  const sf=(hasSecurityFeeds?cfg.securityFeeds:[])
+    .filter(x=>x&&typeof x.url==='string'&&x.url.trim())
+    .map((x,i)=>(
+      {
+        name:String(x.name||`Feed ${i+1}`),
+        url:String(x.url),
+        enabled:x.enabled!==false
+      }
+    ));
+  const wp=(hasWorkspacePages?cfg.workspacePages:[])
+    .filter(x=>x&&typeof x.url==='string'&&x.url.trim())
+    .map((x,i)=>(
+      {
+        icon:String(x.icon||'🌐'),
+        name:String(x.name||`Page ${i+1}`),
+        url:String(x.url),
+        enabled:x.enabled!==false
+      }
+    ));
+  const bs=(hasBookmarkSections?cfg.bookmarkSections:[])
+    .map((section,idx)=>{
+      const entries=(Array.isArray(section?.entries)?section.entries:[])
+        .filter(x=>x&&typeof x.url==='string'&&x.url.trim())
+        .map((x,eIdx)=>(
+          {
+            icon:String(x.icon||'🔗'),
+            label:String(x.label||`Link ${eIdx+1}`),
+            url:String(x.url)
+          }
+        ));
+      return {
+        category:String(section?.category||`Section ${idx+1}`),
+        entries
+      };
+    })
+    .filter(section=>section.entries.length);
+
+  const themes=hasThemes?safeThemes(cfg.themes):(useDefaults?deepClone(DEFAULT_CFG.themes):[]);
+  const requestedTheme=hasActiveTheme?String(cfg.activeTheme||'').trim():'';
+  const activeTheme=(getThemeByName(themes,requestedTheme)?.name)||themes[0]?.name||'Forge';
+
+  return {
+    dropdowns:hasDropdowns?d:(useDefaults?DEFAULT_CFG.dropdowns.slice():[]),
+    searchModes:hasSearchModes?s:(useDefaults?DEFAULT_CFG.searchModes.slice():[]),
+    securityFeeds:hasSecurityFeeds?sf:(useDefaults?deepClone(DEFAULT_CFG.securityFeeds):[]),
+    activeTheme,
+    themes,
+    workspacePages:hasWorkspacePages?wp:(useDefaults?deepClone(DEFAULT_CFG.workspacePages):[]),
+    bookmarkSections:hasBookmarkSections?bs:(useDefaults?deepClone(DEFAULT_CFG.bookmarkSections):[])
+  };
+}
+
+function collectCategories(modes){
+  const set=new Set();
+  (Array.isArray(modes)?modes:[]).forEach(m=>{
+    const c=String(m.category||'').trim();
+    if(c)set.add(c);
+  });
+  if(!set.size)set.add('🌐 GENERAL');
+  return [...set].sort((a,b)=>a.localeCompare(b));
+}
+
+function ensureCategory(cat){
+  const c=String(cat||'').trim();
+  if(!c)return;
+  if(!knownCategories.includes(c))knownCategories.push(c);
+}
+
+function fillCategorySelect(selectEl,current){
+  const cur=String(current||'').trim()||'🌐 GENERAL';
+  ensureCategory(cur);
+  selectEl.innerHTML='';
+  knownCategories.forEach(c=>{
+    const op=document.createElement('option');
+    op.value=c;
+    op.textContent=c;
+    if(c===cur)op.selected=true;
+    selectEl.appendChild(op);
+  });
+}
+
+function getAllSearchRows(){
+  return [...searchRowsEl.querySelectorAll('.row')];
+}
+
+function normalizeCategoryValue(v){
+  return String(v||'').trim().toLowerCase();
+}
+
+function syncSearchRowCategoryCache(){
+  getAllSearchRows().forEach(row=>{
+    const sel=row.querySelector('[data-k="category"]');
+    row.dataset.category=(sel?.value||'').trim();
+  });
+}
+
+function refreshSearchCategorySelects(){
+  getAllSearchRows().forEach(row=>{
+    const sel=row.querySelector('[data-k="category"]');
+    if(sel)fillCategorySelect(sel,sel.value);
+    row.dataset.category=(sel?.value||'').trim();
+  });
+}
+
+function refreshSearchCategoryFilterOptions(){
+  const prev=searchCategoryFilterEl.value||'__all__';
+  searchCategoryFilterEl.innerHTML='';
+
+  const all=document.createElement('option');
+  all.value='__all__';
+  all.textContent='All Categories';
+  searchCategoryFilterEl.appendChild(all);
+
+  knownCategories.forEach(c=>{
+    const op=document.createElement('option');
+    op.value=c;
+    op.textContent=c;
+    searchCategoryFilterEl.appendChild(op);
+  });
+
+  const canKeep=[...searchCategoryFilterEl.options].some(o=>o.value===prev);
+  searchCategoryFilterEl.value=canKeep?prev:'__all__';
+}
+
+function getSearchRowTitle(row,index){
+  const name=(row.querySelector('[data-k="name"]')?.value||'').trim()||`Mode ${index+1}`;
+  const cat=(row.querySelector('[data-k="category"]')?.value||'').trim()||'Uncategorized';
+  return `${name} [${cat}]`;
+}
+
+function refreshSearchEntryFilterOptions(){
+  syncSearchRowCategoryCache();
+  const rows=getAllSearchRows();
+  const prev=searchEntryFilterEl.value||'__all__';
+  const selectedCategory=normalizeCategoryValue(searchCategoryFilterEl.value||'__all__');
+  searchEntryFilterEl.innerHTML='';
+
+  if(selectedCategory==='__all__'){
+    const prompt=document.createElement('option');
+    prompt.value='__none__';
+    prompt.textContent='Select category first';
+    searchEntryFilterEl.appendChild(prompt);
+    searchEntryFilterEl.value='__none__';
+    searchEntryFilterEl.disabled=true;
+    return;
+  }
+
+  searchEntryFilterEl.disabled=false;
+
+  const all=document.createElement('option');
+  all.value='__all__';
+  all.textContent='All Entries';
+  searchEntryFilterEl.appendChild(all);
+
+  const filteredRows=rows
+    .filter(row=>{
+      const rowCategory=normalizeCategoryValue(row.dataset.category||'');
+      return selectedCategory==='__all__'||rowCategory===selectedCategory;
+    })
+    .sort((a,b)=>getSearchRowTitle(a,0).localeCompare(getSearchRowTitle(b,0)));
+
+  filteredRows.forEach((row,i)=>{
+    const op=document.createElement('option');
+    op.value=row.dataset.rowId;
+    op.textContent=getSearchRowTitle(row,i);
+    searchEntryFilterEl.appendChild(op);
+  });
+
+  const canKeep=[...searchEntryFilterEl.options].some(o=>o.value===prev);
+  searchEntryFilterEl.value=canKeep?prev:'__all__';
+}
+
+function applySearchFilters(){
+  syncSearchRowCategoryCache();
+  const category=normalizeCategoryValue(searchCategoryFilterEl.value||'__all__');
+  const entry=(searchEntryFilterEl.value||'__all__').trim();
+  getAllSearchRows().forEach(row=>{
+    const rowCategory=normalizeCategoryValue(row.dataset.category||'');
+    const catOk=category!=='__all__'&&rowCategory===category;
+    const entryOk=searchEntryFilterEl.disabled||entry==='__all__'||row.dataset.rowId===entry;
+    row.style.display=(catOk&&entryOk)?'block':'none';
+  });
+}
+
+function refreshSearchTools(){
+  refreshSearchCategoryFilterOptions();
+  refreshSearchCategorySelects();
+  refreshSearchEntryFilterOptions();
+  applySearchFilters();
+}
+
+function getSiteIconUrl(url){
+  try{
+    const host=new URL(String(url||'')).hostname;
+    if(!host)return '';
+    return `https://logo.clearbit.com/${encodeURIComponent(host)}`;
+  }catch{
+    return '';
+  }
+}
+
+function getSiteIconFallback(url){
+  try{
+    const host=new URL(String(url||'')).hostname;
+    if(!host)return '';
+    return `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(host)}`;
+  }catch{
+    return '';
+  }
+}
+
+function updateSearchIconPreview(row){
+  const iconInput=row.querySelector('[data-k="icon"]');
+  const urlInput=row.querySelector('[data-k="url"]');
+  const preview=row.querySelector('.icon-preview');
+  if(!iconInput||!urlInput||!preview)return;
+
+  const iconRaw=iconInput.value.trim();
+  let src='';
+  if(/^https?:\/\//i.test(iconRaw))src=iconRaw;
+  else if(!iconRaw||/^auto$/i.test(iconRaw))src=getSiteIconUrl(urlInput.value.trim());
+
+  if(src){
+    const fallback=getSiteIconFallback(urlInput.value.trim());
+    preview.src=src;
+    preview.onerror=()=>{
+      if(fallback&&preview.src!==fallback)preview.src=fallback;
+      else preview.style.display='none';
+    };
+    preview.style.display='inline-block';
+  }else{
+    preview.removeAttribute('src');
+    preview.style.display='none';
+  }
+}
+
+function makeRow(item,index){
+  const row=document.createElement('div');
+  row.className='row';
+  row.innerHTML=`
+    <div class="row-top">
+      <div class="row-label">Dropdown ${index+1}</div>
+      <button class="remove" type="button">REMOVE</button>
+    </div>
+    <div class="grid">
+      <label>Button Label</label><input data-k="buttonLabel" value="${escapeHtml(item.buttonLabel)}">
+      <label>Header Title</label><input data-k="title" value="${escapeHtml(item.title)}">
+      <label>Emoji Icon</label>
+      <div class="emoji-wrap">
+        <input data-k="icon" value="${escapeHtml(item.icon)}" placeholder="🍓">
+        <button class="emoji-btn" type="button" title="Pick emoji">😀</button>
+        <div class="emoji-picker">
+          <div class="emoji-grid"></div>
+          <a class="emoji-help" href="https://emojidb.org" target="_blank">Need one? emojidb.org</a>
+        </div>
+      </div>
+      <label>Host URL</label><input data-k="url" value="${escapeHtml(item.url)}">
+    </div>`;
+
+  const emojiInput=row.querySelector('[data-k="icon"]');
+  const emojiBtn=row.querySelector('.emoji-btn');
+  const picker=row.querySelector('.emoji-picker');
+  const grid=row.querySelector('.emoji-grid');
+
+  RECOMMENDED_EMOJIS.forEach(e=>{
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='emoji-item';
+    b.textContent=e;
+    b.addEventListener('click',()=>{emojiInput.value=e;picker.classList.remove('open');});
+    grid.appendChild(b);
+  });
+
+  emojiBtn.addEventListener('click',ev=>{
+    ev.stopPropagation();
+    document.querySelectorAll('.emoji-picker.open').forEach(p=>{if(p!==picker)p.classList.remove('open');});
+    picker.classList.toggle('open');
+  });
+
+  picker.addEventListener('click',ev=>ev.stopPropagation());
+
+  row.querySelector('.remove').addEventListener('click',()=>{
+    row.remove();
+    renumber();
+  });
+
+  return row;
+}
+
+function renumber(){
+  [...rowsEl.querySelectorAll('.row-label')].forEach((el,i)=>el.textContent=`Dropdown ${i+1}`);
+}
+
+function renumberSearch(){
+  [...searchRowsEl.querySelectorAll('.row-label')].forEach((el,i)=>el.textContent=`Search Mode ${i+1}`);
+}
+
+function renumberFeeds(){
+  [...feedRowsEl.querySelectorAll('.row-label')].forEach((el,i)=>el.textContent=`Feed ${i+1}`);
+}
+
+function renumberWorkspacePages(){
+  [...workspacePageRowsEl.querySelectorAll('.row-label')].forEach((el,i)=>el.textContent=`Webpage ${i+1}`);
+}
+
+function makeSearchRow(item,index){
+  ensureCategory(item.category||'🌐 GENERAL');
+
+  const row=document.createElement('div');
+  row.className='row';
+  row.dataset.rowId=`sr-${++searchRowSeq}`;
+  row.innerHTML=`
+    <div class="row-top">
+      <div class="row-label">Search Mode ${index+1}</div>
+      <button class="remove" type="button">REMOVE</button>
+    </div>
+    <div class="grid">
+      <label>Category</label><select data-k="category"></select>
+      <label>Name</label><input data-k="name" value="${escapeHtml(item.name||'Mode')}">
+      <label>Short</label><input data-k="short" value="${escapeHtml(item.short||'M')}">
+      <label>Icon / Auto</label>
+      <div class="icon-wrap">
+        <input data-k="icon" value="${escapeHtml(item.icon||'auto')}" placeholder="auto, emoji, or https://...">
+        <button class="tiny-btn" type="button" data-k="auto-icon">SITE ICON</button>
+        <img class="icon-preview" alt="site icon preview">
+      </div>
+      <label>URL</label><input data-k="url" value="${escapeHtml(item.url||'')}">
+      <label>Description</label><input data-k="desc" value="${escapeHtml(item.desc||'')}">
+      <label>Use Base64</label><input data-k="b64" type="checkbox" ${item.b64?'checked':''}>
+    </div>`;
+
+  const categorySelect=row.querySelector('[data-k="category"]');
+  fillCategorySelect(categorySelect,item.category||'🌐 GENERAL');
+  row.dataset.category=(categorySelect.value||'').trim();
+
+  categorySelect.addEventListener('change',()=>{
+    const normalized=(categorySelect.value||'').trim();
+    row.dataset.category=normalized;
+    ensureCategory(normalized);
+    refreshSearchTools();
+  });
+  row.querySelector('[data-k="name"]').addEventListener('input',()=>refreshSearchEntryFilterOptions());
+  row.querySelector('[data-k="url"]').addEventListener('input',()=>updateSearchIconPreview(row));
+  row.querySelector('[data-k="icon"]').addEventListener('input',()=>updateSearchIconPreview(row));
+  row.querySelector('[data-k="auto-icon"]').addEventListener('click',()=>{
+    const iconInput=row.querySelector('[data-k="icon"]');
+    iconInput.value='auto';
+    updateSearchIconPreview(row);
+  });
+  updateSearchIconPreview(row);
+
+  row.querySelector('.remove').addEventListener('click',()=>{
+    row.remove();
+    renumberSearch();
+    refreshSearchTools();
+  });
+
+  return row;
+}
+
+function makeFeedRow(feed,index){
+  const row=document.createElement('div');
+  row.className='row';
+  row.dataset.feedRowId=`fr-${++feedRowSeq}`;
+  row.innerHTML=`
+    <div class="row-top">
+      <div class="row-label">Feed ${index+1}</div>
+      <button class="remove" type="button">REMOVE</button>
+    </div>
+    <div class="feed-row-grid">
+      <label>Name</label><input data-k="name" type="text" value="${escapeHtml(feed.name||'Feed')}" placeholder="Feed name">
+      <label>RSS URL</label><input data-k="url" type="text" value="${escapeHtml(feed.url||'')}" placeholder="https://...">
+      <label class="feed-enabled-inline"><input data-k="enabled" type="checkbox" ${feed.enabled!==false?'checked':''}>Enabled</label>
+    </div>`;
+
+  row.querySelector('.remove').addEventListener('click',()=>{
+    row.remove();
+    renumberFeeds();
+  });
+
+  return row;
+}
+
+function makeWorkspacePageRow(page,index){
+  const row=document.createElement('div');
+  row.className='row';
+  row.dataset.workspacePageId=`wp-${++workspacePageSeq}`;
+  row.innerHTML=`
+    <div class="row-top">
+      <div class="row-label">Webpage ${index+1}</div>
+      <button class="remove" type="button">REMOVE</button>
+    </div>
+    <div class="workspace-page-row">
+      <label>Icon</label><input data-k="icon" type="text" value="${escapeHtml(page.icon||'🌐')}" placeholder="🌐">
+      <label>Name</label><input data-k="name" type="text" value="${escapeHtml(page.name||'Webpage')}" placeholder="Tab name">
+      <label>URL</label><input data-k="url" type="text" value="${escapeHtml(page.url||'')}" placeholder="https://...">
+      <label class="workspace-page-enabled"><input data-k="enabled" type="checkbox" ${page.enabled!==false?'checked':''}>Enabled</label>
+    </div>`;
+
+  row.querySelector('.remove').addEventListener('click',()=>{
+    row.remove();
+    renumberWorkspacePages();
+  });
+
+  return row;
+}
+
+function getAllBookmarkSectionRows(){
+  return [...bookmarkRowsEl.querySelectorAll('.row[data-bookmark-section="1"]')];
+}
+
+function renumberBookmarkSections(){
+  getAllBookmarkSectionRows().forEach((row,i)=>{
+    const label=row.querySelector('.row-label');
+    if(label)label.textContent=`Section *${i+1}`;
+  });
+}
+
+function getBookmarkSectionCategory(row){
+  return (row.querySelector('[data-k="category"]')?.value||'').trim();
+}
+
+function refreshBookmarkCategoryFilterOptions(){
+  const prev=bookmarkCategoryFilterEl.value||'__all__';
+  bookmarkCategoryFilterEl.innerHTML='';
+  const all=document.createElement('option');
+  all.value='__all__';
+  all.textContent='All Categories';
+  bookmarkCategoryFilterEl.appendChild(all);
+
+  getAllBookmarkSectionRows().forEach(row=>{
+    const cat=getBookmarkSectionCategory(row);
+    if(!cat)return;
+    if([...bookmarkCategoryFilterEl.options].some(o=>o.value===cat))return;
+    const op=document.createElement('option');
+    op.value=cat;
+    op.textContent=cat;
+    bookmarkCategoryFilterEl.appendChild(op);
+  });
+
+  const keep=[...bookmarkCategoryFilterEl.options].some(o=>o.value===prev);
+  bookmarkCategoryFilterEl.value=keep?prev:'__all__';
+}
+
+function applyBookmarkFilters(){
+  const selectedCategory=(bookmarkCategoryFilterEl.value||'__all__').trim();
+  getAllBookmarkSectionRows().forEach(row=>{
+    const cat=getBookmarkSectionCategory(row);
+    const catOk=selectedCategory==='__all__'||cat===selectedCategory;
+    let hasVisibleEntry=false;
+    const entries=[...row.querySelectorAll('[data-bookmark-entries="1"] .bookmark-entry-row')];
+    entries.forEach(entryRow=>{
+      const show=catOk;
+      entryRow.style.display=show?'grid':'none';
+      if(show)hasVisibleEntry=true;
+    });
+    row.style.display=(catOk&&hasVisibleEntry)?'block':'none';
+  });
+}
+
+function refreshBookmarkTools(){
+  refreshBookmarkCategoryFilterOptions();
+  applyBookmarkFilters();
+}
+
+function makeBookmarkEntryRow(entry){
+  const row=document.createElement('div');
+  row.className='bookmark-entry-row';
+  row.dataset.entryId=`be-${++bookmarkEntrySeq}`;
+  row.innerHTML=`
+    <input data-k="icon" value="${escapeHtml(entry.icon||'🔗')}" placeholder="Icon" title="Icon" aria-label="Icon">
+    <input data-k="label" value="${escapeHtml(entry.label||'Link')}" placeholder="Label" title="Label" aria-label="Label">
+    <input data-k="url" value="${escapeHtml(entry.url||'https://')}" placeholder="URL" title="URL" aria-label="URL">
+    <button class="remove" type="button">REMOVE LINK</button>`;
+  row.querySelector('.remove').addEventListener('click',()=>{row.remove();refreshBookmarkTools();});
+  row.querySelector('[data-k="label"]').addEventListener('input',applyBookmarkFilters);
+  row.querySelector('[data-k="url"]').addEventListener('input',applyBookmarkFilters);
+  return row;
+}
+
+function makeBookmarkSectionRow(section,index){
+  const row=document.createElement('div');
+  row.className='row';
+  row.dataset.bookmarkSection='1';
+  row.dataset.sectionId=`bs-${++bookmarkSectionSeq}`;
+  row.innerHTML=`
+    <div class="row-top">
+      <div class="row-label">Section *${index+1}</div>
+      <button class="remove" type="button">REMOVE SECTION</button>
+    </div>
+    <div class="bookmark-section-category">
+      <label>Category</label><input data-k="category" value="${escapeHtml(section.category||'Section')}" placeholder="Category name">
+    </div>
+    <div data-bookmark-entries="1"></div>
+    <div class="actions" style="margin-top:8px;">
+      <button class="btn" type="button" data-k="add-entry">ADD LINK</button>
+    </div>`;
+
+  const entriesWrap=row.querySelector('[data-bookmark-entries="1"]');
+  (Array.isArray(section.entries)?section.entries:[]).forEach(entry=>{
+    entriesWrap.appendChild(makeBookmarkEntryRow(entry));
+  });
+  if(!entriesWrap.children.length){
+    entriesWrap.appendChild(makeBookmarkEntryRow({icon:'🔗',label:'New Link',url:'https://'}));
+  }
+
+  row.querySelector('[data-k="add-entry"]').addEventListener('click',()=>{
+    entriesWrap.appendChild(makeBookmarkEntryRow({icon:'🔗',label:'New Link',url:'https://'}));
+    refreshBookmarkTools();
+  });
+
+  row.querySelector('[data-k="category"]').addEventListener('input',refreshBookmarkTools);
+
+  row.querySelector('.row-top .remove').addEventListener('click',()=>{
+    row.remove();
+    renumberBookmarkSections();
+    refreshBookmarkTools();
+  });
+
+  return row;
+}
+
+function escapeHtml(s){
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/\"/g,'&quot;');
+}
+
+function render(cfg){
+  rowsEl.innerHTML='';
+  cfg.dropdowns.forEach((d,i)=>rowsEl.appendChild(makeRow(d,i)));
+
+  knownCategories=collectCategories(cfg.searchModes);
+  searchRowsEl.innerHTML='';
+  cfg.searchModes.forEach((s,i)=>searchRowsEl.appendChild(makeSearchRow(s,i)));
+  refreshSearchTools();
+
+  feedRowsEl.innerHTML='';
+  (cfg.securityFeeds||[]).forEach((feed,i)=>feedRowsEl.appendChild(makeFeedRow(feed,i)));
+
+  workspacePageRowsEl.innerHTML='';
+  (cfg.workspacePages||[]).forEach((page,i)=>workspacePageRowsEl.appendChild(makeWorkspacePageRow(page,i)));
+
+  renderThemeEditor(cfg.activeTheme,cfg.themes);
+
+  bookmarkRowsEl.innerHTML='';
+  (cfg.bookmarkSections||[]).forEach((section,i)=>bookmarkRowsEl.appendChild(makeBookmarkSectionRow(section,i)));
+  refreshBookmarkTools();
+}
+
+function readUi(){
+  const rows=[...rowsEl.querySelectorAll('.row')];
+  const dropdowns=rows.map(r=>({
+    buttonLabel:r.querySelector('[data-k="buttonLabel"]').value.trim(),
+    title:r.querySelector('[data-k="title"]').value.trim(),
+    icon:r.querySelector('[data-k="icon"]').value.trim(),
+    url:r.querySelector('[data-k="url"]').value.trim()
+  })).filter(d=>d.url);
+
+  const searchRows=[...searchRowsEl.querySelectorAll('.row')];
+  const searchModes=searchRows.map(r=>({
+    category:r.querySelector('[data-k="category"]').value.trim(),
+    name:r.querySelector('[data-k="name"]').value.trim(),
+    short:r.querySelector('[data-k="short"]').value.trim(),
+    icon:r.querySelector('[data-k="icon"]').value.trim(),
+    url:r.querySelector('[data-k="url"]').value.trim(),
+    desc:r.querySelector('[data-k="desc"]').value.trim(),
+    b64:Boolean(r.querySelector('[data-k="b64"]').checked)
+  })).filter(s=>s.url);
+
+  const securityFeeds=[...feedRowsEl.querySelectorAll('.row')].map(r=>({
+    name:(r.querySelector('[data-k="name"]')?.value||'').trim(),
+    url:(r.querySelector('[data-k="url"]')?.value||'').trim(),
+    enabled:Boolean(r.querySelector('[data-k="enabled"]')?.checked)
+  })).filter(feed=>feed.url);
+
+  const workspacePages=[...workspacePageRowsEl.querySelectorAll('.row')].map(r=>({
+    icon:(r.querySelector('[data-k="icon"]')?.value||'').trim(),
+    name:(r.querySelector('[data-k="name"]')?.value||'').trim(),
+    url:(r.querySelector('[data-k="url"]')?.value||'').trim(),
+    enabled:Boolean(r.querySelector('[data-k="enabled"]')?.checked)
+  })).filter(page=>page.url);
+
+  const themes=safeThemes(currentThemes);
+  const activeTheme=(getThemeByName(themes,activeThemeSelectEl.value)?.name)||themes[0]?.name||'Forge';
+
+  const bookmarkSections=getAllBookmarkSectionRows().map(sectionRow=>{
+    const category=(sectionRow.querySelector('[data-k="category"]')?.value||'').trim();
+    const entryRows=[...sectionRow.querySelectorAll('[data-bookmark-entries="1"] .bookmark-entry-row')];
+    const entries=entryRows.map(entryRow=>({
+      icon:(entryRow.querySelector('[data-k="icon"]')?.value||'').trim(),
+      label:(entryRow.querySelector('[data-k="label"]')?.value||'').trim(),
+      url:(entryRow.querySelector('[data-k="url"]')?.value||'').trim()
+    })).filter(entry=>entry.url);
+    return {category,entries};
+  }).filter(section=>section.category&&section.entries.length);
+
+  return safeCfg({dropdowns,searchModes,securityFeeds,activeTheme,themes,workspacePages,bookmarkSections},{useDefaults:false});
+}
+
+async function loadBase(){
+  let fileCfg=safeCfg(DEFAULT_CFG,{useDefaults:true});
+  let hasFileConfig=false;
+  try{
+    const r=await fetch('config.json',{cache:'no-store'});
+    if(r.ok){
+      fileCfg=safeCfg(await r.json(),{useDefaults:false});
+      hasFileConfig=true;
+    }
+  }catch{}
+
+  try{
+    const saved=localStorage.getItem(KEY);
+    if(saved){
+      const rawSaved=JSON.parse(saved);
+      const savedCfg=safeCfg(rawSaved,{useDefaults:false});
+      const hasSavedDropdowns=Array.isArray(rawSaved?.dropdowns);
+      const hasSavedSearchModes=Array.isArray(rawSaved?.searchModes);
+      const hasSavedSecurityFeeds=Array.isArray(rawSaved?.securityFeeds);
+      const hasSavedThemes=Array.isArray(rawSaved?.themes);
+      const hasSavedActiveTheme=typeof rawSaved?.activeTheme==='string';
+      const hasSavedWorkspacePages=Array.isArray(rawSaved?.workspacePages);
+      const hasSavedBookmarkSections=Array.isArray(rawSaved?.bookmarkSections);
+      return safeCfg({
+        dropdowns:hasSavedDropdowns?savedCfg.dropdowns:fileCfg.dropdowns,
+        searchModes:hasSavedSearchModes?savedCfg.searchModes:fileCfg.searchModes,
+        securityFeeds:hasSavedSecurityFeeds?savedCfg.securityFeeds:fileCfg.securityFeeds,
+        activeTheme:hasSavedActiveTheme?savedCfg.activeTheme:fileCfg.activeTheme,
+        themes:hasSavedThemes?savedCfg.themes:fileCfg.themes,
+        workspacePages:hasSavedWorkspacePages?savedCfg.workspacePages:fileCfg.workspacePages,
+        bookmarkSections:hasSavedBookmarkSections?savedCfg.bookmarkSections:fileCfg.bookmarkSections
+      },{useDefaults:false});
+    }
+  }catch{}
+
+  if(hasFileConfig)return fileCfg;
+  return safeCfg(DEFAULT_CFG,{useDefaults:true});
+}
+
+document.getElementById('add-row').addEventListener('click',()=>{
+  const icon=RECOMMENDED_EMOJIS[Math.floor(Math.random()*RECOMMENDED_EMOJIS.length)];
+  rowsEl.appendChild(makeRow({buttonLabel:'NEW PANEL',title:'NEW PANEL',icon,url:'http://'},rowsEl.children.length));
+  renumber();
+});
+
+document.getElementById('add-search-row').addEventListener('click',()=>{
+  const selectedCategory=searchCategoryFilterEl.value&&searchCategoryFilterEl.value!=='__all__'
+    ?searchCategoryFilterEl.value
+    :(knownCategories[0]||'🌐 GENERAL');
+  searchRowsEl.appendChild(makeSearchRow({category:selectedCategory,name:'New Mode',short:'NEW',icon:'auto',url:'https://',desc:'',b64:false},searchRowsEl.children.length));
+  renumberSearch();
+  refreshSearchTools();
+  showNotice('Search mode added');
+});
+
+document.getElementById('add-feed-row').addEventListener('click',()=>{
+  feedRowsEl.appendChild(makeFeedRow({name:'New Feed',url:'https://',enabled:true},feedRowsEl.children.length));
+  renumberFeeds();
+  showNotice('Feed source added');
+});
+
+document.getElementById('add-workspace-page').addEventListener('click',()=>{
+  workspacePageRowsEl.appendChild(makeWorkspacePageRow({icon:'🌐',name:'New Webpage',url:'https://',enabled:true},workspacePageRowsEl.children.length));
+  renumberWorkspacePages();
+  showNotice('Workspace webpage added');
+});
+
+activeThemeSelectEl.addEventListener('change',()=>{
+  const selected=getThemeByName(currentThemes,activeThemeSelectEl.value)||currentThemes[0];
+  if(selected)renderThemeColorInputs(selected);
+});
+
+document.getElementById('add-category').addEventListener('click',()=>{
+  const name=newCategoryNameEl.value.trim();
+  if(!name){
+    showStatus('enter a category name first',false);
+    return;
+  }
+  ensureCategory(name);
+  refreshSearchTools();
+  searchCategoryFilterEl.value=name;
+  refreshSearchEntryFilterOptions();
+  applySearchFilters();
+  newCategoryNameEl.value='';
+  showStatus(`added category ${name}`,true);
+  showNotice(`Category added: ${name}`);
+});
+
+document.getElementById('add-bookmark-section').addEventListener('click',()=>{
+  const nextName=`Section ${getAllBookmarkSectionRows().length+1}`;
+  bookmarkRowsEl.appendChild(makeBookmarkSectionRow({category:nextName,entries:[{icon:'🔗',label:'New Link',url:'https://'}]},getAllBookmarkSectionRows().length));
+  renumberBookmarkSections();
+  refreshBookmarkTools();
+  showNotice('Bookmark section added');
+});
+
+searchCategoryFilterEl.addEventListener('change',()=>{
+  refreshSearchEntryFilterOptions();
+  searchEntryFilterEl.value='__all__';
+  applySearchFilters();
+});
+searchEntryFilterEl.addEventListener('change',applySearchFilters);
+
+bookmarkCategoryFilterEl.addEventListener('change',()=>{
+  applyBookmarkFilters();
+});
+
+document.addEventListener('click',()=>{
+  document.querySelectorAll('.emoji-picker.open').forEach(p=>p.classList.remove('open'));
+});
+
+document.getElementById('save').addEventListener('click',()=>{
+  const cfg=readUi();
+  localStorage.setItem(KEY,JSON.stringify(cfg));
+  showStatus('saved to browser storage',true);
+});
+
+document.getElementById('export').addEventListener('click',()=>{
+  const cfg=readUi();
+  const text=JSON.stringify(cfg,null,2);
+  const blob=new Blob([text],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='landing-config.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showStatus('exported landing-config.json',true);
+});
+
+const importInput=document.getElementById('import-file');
+document.getElementById('import').addEventListener('click',()=>importInput.click());
+
+importInput.addEventListener('change',async()=>{
+  const f=importInput.files&&importInput.files[0];
+  if(!f)return;
+  try{
+    const text=await f.text();
+    const parsed=JSON.parse(text);
+    const cfg=safeCfg(parsed);
+    localStorage.setItem(KEY,JSON.stringify(cfg));
+    render(cfg);
+    showStatus('imported and saved',true);
+  }catch{
+    showStatus('import failed: invalid JSON',false);
+  }finally{
+    importInput.value='';
+  }
+});
+
+document.getElementById('reset').addEventListener('click',async()=>{
+  localStorage.removeItem(KEY);
+  const cfg=await loadBase();
+  render(cfg);
+  showStatus('reloaded from config.json',true);
+});
+
+loadBase().then(cfg=>{render(cfg);showStatus('loaded',true);});
+</script>
+</body>
+</html>
