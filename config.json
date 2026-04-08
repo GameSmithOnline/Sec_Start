@@ -458,6 +458,7 @@
       "url": "https://krebsonsecurity.com/feed/",
       "enabled": true
     },
+  "quizAutoAdvanceSeconds": 2,
     {
       "name": "Dark Reading",
       "url": "https://www.darkreading.com/rss.xml",
@@ -496,7 +497,12 @@
       "colors": {"bg": "#0d140f", "panel": "#121d15", "border": "#1d4b2b", "glow": "#33ff66", "glow2": "#8affab", "muted": "#2d8a45", "text": "#b9ffcf", "dim": "#4f8a60", "green": "#3dff90", "warn": "#d7ff5f"}
     }
   ],
-  "workspacePages": [],
+  "workspacePages": [
+    { "icon": "🎯", "name": "MITRE ATT&CK ENTERPRISE", "url": "mitre-attack-copy.html", "enabled": true, "themeMode": "auto" },
+    { "icon": "📱", "name": "MITRE ATT&CK MOBILE", "url": "mitre-attack-mobile-copy.html", "enabled": true, "themeMode": "auto" },
+    { "icon": "🏭", "name": "MITRE ATT&CK ICS", "url": "mitre-attack-ics-copy.html", "enabled": true, "themeMode": "auto" },
+    { "icon": "📚", "name": "SecurityWeek", "url": "https://www.securityweek.com", "enabled": true, "themeMode": "auto" }
+  ],
   "bookmarkSections": [
     {
       "category": "Cert Bodies",
@@ -516,6 +522,7 @@
         { "icon": "🟢", "label": "HTB Academy", "url": "https://academy.hackthebox.com" },
         { "icon": "🟢", "label": "PortSwigger", "url": "https://portswigger.net/web-security" },
         { "icon": "🟢", "label": "INE Security", "url": "https://security.ine.com" },
+        { "icon": "🟢", "label": "Anthropic Skilljar", "url": "https://anthropic.skilljar.com" },
         { "icon": "🟢", "label": "SANS", "url": "https://www.sans.org/cyberaces/" }
       ]
     },
@@ -525,8 +532,14 @@
         { "icon": "📰", "label": "BleepingComp", "url": "https://www.bleepingcomputer.com" },
         { "icon": "📰", "label": "Dark Reading", "url": "https://www.darkreading.com" },
         { "icon": "⚠️", "label": "NVD / CVEs", "url": "https://nvd.nist.gov/vuln/search" },
+        { "icon": "📘", "label": "NIST RMF", "url": "https://csrc.nist.gov/Projects/risk-management/about-rmf" },
         { "icon": "⚠️", "label": "CISA KEV", "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog" },
-        { "icon": "🎯", "label": "MITRE ATT&CK", "url": "https://attack.mitre.org" }
+        { "icon": "🎯", "label": "MITRE ATT&CK Enterprise", "url": "mitre-attack-copy.html" },
+        { "icon": "🎯", "label": "MITRE ATT&CK Mobile", "url": "mitre-attack-mobile-copy.html" },
+        { "icon": "🎯", "label": "MITRE ATT&CK ICS", "url": "mitre-attack-ics-copy.html" },
+        { "icon": "🧠", "label": "ATT&CK Quiz (Enterprise)", "url": "mitre-attack-copy.html?quiz=1&dataset=enterprise-attack-18.1.json" },
+        { "icon": "🧠", "label": "ATT&CK Quiz (Mobile)", "url": "mitre-attack-mobile-copy.html?quiz=1&dataset=mobile-attack-18.1.json" },
+        { "icon": "🧠", "label": "ATT&CK Quiz (ICS)", "url": "mitre-attack-ics-copy.html?quiz=1&dataset=ics-attack-18.1.json" }
       ]
     },
     {

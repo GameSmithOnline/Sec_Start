@@ -35,6 +35,35 @@ body{
   max-width:980px;
 }
 .panel h2{font-family:'Orbitron',monospace;font-size:11px;color:var(--glow);letter-spacing:1.5px;margin-bottom:10px;}
+.cfg-toggle{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:16px;
+  margin-bottom:10px;
+  padding:7px 10px;
+  border:1px solid var(--border);
+  border-radius:5px;
+  background:rgba(156,56,255,0.06);
+  color:var(--glow);
+  font-family:'Orbitron',monospace;
+  font-size:11px;
+  letter-spacing:1.2px;
+  text-align:left;
+  cursor:pointer;
+}
+.cfg-toggle:hover{border-color:var(--glow);background:rgba(156,56,255,0.12);} 
+.cfg-toggle::after{
+  content:'▸';
+  font-family:'Share Tech Mono',monospace;
+  font-size:12px;
+  color:var(--dim);
+  transition:transform .15s ease,color .15s ease;
+}
+.cfg-toggle.open::after{transform:rotate(90deg);color:var(--glow);} 
+.cfg-hidden{display:none !important;}
 .panel p{color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:11px;margin-bottom:12px;line-height:1.5;}
 #rows{display:flex;flex-direction:column;gap:10px;}
 #search-rows{display:flex;flex-direction:column;gap:10px;}
@@ -131,6 +160,16 @@ body{
       <div id="status">ready</div>
     </div>
 
+    <h2 style="margin-top:16px;">THEMES</h2>
+    <p>Pick a theme and adjust its colors using the color wheel pickers.</p>
+    <div class="actions" id="theme-tools">
+      <div class="theme-row">
+        <label for="active-theme-select">Active Theme</label>
+        <select id="active-theme-select" class="tool-select"></select>
+      </div>
+    </div>
+    <div id="theme-colors" class="theme-color-grid"></div>
+
     <h2 style="margin-top:16px;">SEARCH MODES</h2>
     <p>Add/remove search engines and categories for the top search-mode selector.</p>
     <div class="actions" id="search-tools">
@@ -152,21 +191,11 @@ body{
     <div id="feed-rows"></div>
 
     <h2 style="margin-top:16px;">WORKSPACE WEBPAGES</h2>
-    <p>Add extra webpages to the center tab workspace on the start page.</p>
+    <p>Add extra webpages to the center tab workspace on the start page. Note: some sites will not load in tabs because they block iframe embedding with security headers (such as X-Frame-Options or Content-Security-Policy frame-ancestors).</p>
     <div class="actions" id="workspace-tools">
       <button id="add-workspace-page" class="btn" type="button">ADD WEBPAGE</button>
     </div>
     <div id="workspace-page-rows"></div>
-
-    <h2 style="margin-top:16px;">THEMES</h2>
-    <p>Pick a theme and adjust its colors using the color wheel pickers.</p>
-    <div class="actions" id="theme-tools">
-      <div class="theme-row">
-        <label for="active-theme-select">Active Theme</label>
-        <select id="active-theme-select" class="tool-select"></select>
-      </div>
-    </div>
-    <div id="theme-colors" class="theme-color-grid"></div>
 
     <h2 style="margin-top:16px;">BOOKMARK SECTIONS</h2>
     <p>Manage left sidebar categories and links (Cert Bodies, Training, Intel, Tools, etc).</p>
@@ -282,12 +311,14 @@ const DEFAULT_CFG={
       {icon:'🟢',label:'HTB Academy',url:'https://academy.hackthebox.com'},
       {icon:'🟢',label:'PortSwigger',url:'https://portswigger.net/web-security'},
       {icon:'🟢',label:'INE Security',url:'https://security.ine.com'},
+      {icon:'🟢',label:'Anthropic Skilljar',url:'https://anthropic.skilljar.com'},
       {icon:'🟢',label:'SANS',url:'https://www.sans.org/cyberaces/'}
     ]},
     {category:'Intel',entries:[
       {icon:'📰',label:'BleepingComp',url:'https://www.bleepingcomputer.com'},
       {icon:'📰',label:'Dark Reading',url:'https://www.darkreading.com'},
       {icon:'⚠️',label:'NVD / CVEs',url:'https://nvd.nist.gov/vuln/search'},
+      {icon:'📘',label:'NIST RMF',url:'https://csrc.nist.gov/Projects/risk-management/about-rmf'},
       {icon:'⚠️',label:'CISA KEV',url:'https://www.cisa.gov/known-exploited-vulnerabilities-catalog'},
       {icon:'🎯',label:'MITRE ATT&CK',url:'https://attack.mitre.org'}
     ]},
@@ -315,6 +346,7 @@ const searchEntryFilterEl=document.getElementById('search-entry-filter');
 const newCategoryNameEl=document.getElementById('new-category-name');
 const bookmarkCategoryFilterEl=document.getElementById('bookmark-category-filter');
 const noticeEl=document.getElementById('notice');
+const panelEl=document.querySelector('.panel');
 let bookmarkSectionSeq=0;
 let bookmarkEntrySeq=0;
 
@@ -324,6 +356,9 @@ let feedRowSeq=0;
 let workspacePageSeq=0;
 let noticeTimer=null;
 let currentThemes=deepClone(DEFAULT_THEMES);
+let autoSaveTimer=null;
+let isRendering=false;
+const AUTO_SAVE_DELAY_MS=450;
 
 function showStatus(msg,isOk){
   statusEl.textContent=msg;
@@ -340,6 +375,73 @@ function showNotice(msg){
 
 function deepClone(obj){
   return JSON.parse(JSON.stringify(obj));
+}
+
+function persistConfig(cfg,statusMessage){
+  localStorage.setItem(KEY,JSON.stringify(cfg));
+  if(statusMessage)showStatus(statusMessage,true);
+}
+
+function performAutoSave(){
+  if(isRendering)return;
+  const cfg=readUi();
+  persistConfig(cfg,'autosaved');
+}
+
+function scheduleAutoSave(){
+  if(isRendering)return;
+  if(autoSaveTimer)clearTimeout(autoSaveTimer);
+  autoSaveTimer=setTimeout(()=>{
+    autoSaveTimer=null;
+    performAutoSave();
+  },AUTO_SAVE_DELAY_MS);
+}
+
+function setupAutoSave(){
+  if(!panelEl)return;
+  panelEl.addEventListener('input',scheduleAutoSave);
+  panelEl.addEventListener('change',scheduleAutoSave);
+
+  const observer=new MutationObserver(()=>scheduleAutoSave());
+  observer.observe(panelEl,{childList:true,subtree:true});
+}
+
+function findPreviousHeading(start){
+  let node=start;
+  while(node&&node.previousElementSibling){
+    node=node.previousElementSibling;
+    if(node.tagName==='H2')return node;
+  }
+  return null;
+}
+
+function setupSectionDropdown({toolsId,rowsId,startCollapsed=true}){
+  const tools=document.getElementById(toolsId);
+  const rows=document.getElementById(rowsId);
+  if(!tools||!rows)return;
+
+  const description=(tools.previousElementSibling&&tools.previousElementSibling.tagName==='P')
+    ?tools.previousElementSibling
+    :null;
+  const heading=findPreviousHeading(description||tools);
+  if(!heading)return;
+
+  const toggle=document.createElement('button');
+  toggle.type='button';
+  toggle.className='cfg-toggle';
+  toggle.textContent=heading.textContent||'SECTION';
+
+  heading.replaceWith(toggle);
+
+  const targets=[description,tools,rows].filter(Boolean);
+  const setOpen=open=>{
+    toggle.classList.toggle('open',open);
+    toggle.setAttribute('aria-expanded',open?'true':'false');
+    targets.forEach(el=>el.classList.toggle('cfg-hidden',!open));
+  };
+
+  toggle.addEventListener('click',()=>setOpen(!toggle.classList.contains('open')));
+  setOpen(!startCollapsed);
 }
 
 function normalizeHexColor(value,fallback){
@@ -1045,6 +1147,7 @@ function escapeHtml(s){
 }
 
 function render(cfg){
+  isRendering=true;
   rowsEl.innerHTML='';
   cfg.dropdowns.forEach((d,i)=>rowsEl.appendChild(makeRow(d,i)));
 
@@ -1064,6 +1167,7 @@ function render(cfg){
   bookmarkRowsEl.innerHTML='';
   (cfg.bookmarkSections||[]).forEach((section,i)=>bookmarkRowsEl.appendChild(makeBookmarkSectionRow(section,i)));
   refreshBookmarkTools();
+  isRendering=false;
 }
 
 function readUi(){
@@ -1228,9 +1332,12 @@ document.addEventListener('click',()=>{
 });
 
 document.getElementById('save').addEventListener('click',()=>{
+  if(autoSaveTimer){
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer=null;
+  }
   const cfg=readUi();
-  localStorage.setItem(KEY,JSON.stringify(cfg));
-  showStatus('saved to browser storage',true);
+  persistConfig(cfg,'saved to browser storage');
 });
 
 document.getElementById('export').addEventListener('click',()=>{
@@ -1274,6 +1381,12 @@ document.getElementById('reset').addEventListener('click',async()=>{
   render(cfg);
   showStatus('reloaded from config.json',true);
 });
+
+setupSectionDropdown({toolsId:'feed-tools',rowsId:'feed-rows',startCollapsed:true});
+setupSectionDropdown({toolsId:'search-tools',rowsId:'search-rows',startCollapsed:true});
+setupSectionDropdown({toolsId:'workspace-tools',rowsId:'workspace-page-rows',startCollapsed:true});
+setupSectionDropdown({toolsId:'bookmark-tools',rowsId:'bookmark-rows',startCollapsed:true});
+setupAutoSave();
 
 loadBase().then(cfg=>{render(cfg);showStatus('loaded',true);});
 </script>
