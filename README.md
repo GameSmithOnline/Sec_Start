@@ -10,6 +10,7 @@ A customizable cybersecurity start page with themes, OSINT-heavy search modes, s
 
 ## Recommended Browser
 Vivaldi is recommended because it handles custom start pages and tab/startup behavior very cleanly.
+When using vivaldi browser I recomend the Neon Dreams dark theme for best results!
 
 ## Quick Setup in Any Browser
 
