@@ -4,6 +4,8 @@ A customizable cybersecurity start page with themes, OSINT-heavy search modes, s
 
 ![alt text](image.png)
 <img width="1855" height="896" alt="image" src="https://github.com/user-attachments/assets/41da443f-8fbb-41e8-bf3f-44b7bd8289e5" />
+<img width="747" height="850" alt="image" src="https://github.com/user-attachments/assets/9ecbb4ed-7904-4d57-b0e5-12069cff57d0" />
+
 
 
 ## Recommended Browser
