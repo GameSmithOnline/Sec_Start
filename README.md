@@ -3,6 +3,8 @@
 A customizable cybersecurity start page with themes, OSINT-heavy search modes, security feeds, bookmarks, workspace tabs, and a roadmap panel.
 
 ![alt text](image.png)
+<img width="1855" height="896" alt="image" src="https://github.com/user-attachments/assets/41da443f-8fbb-41e8-bf3f-44b7bd8289e5" />
+
 
 ## Recommended Browser
 Vivaldi is recommended because it handles custom start pages and tab/startup behavior very cleanly.
